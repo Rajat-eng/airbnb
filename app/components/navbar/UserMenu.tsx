@@ -5,12 +5,15 @@ import Avatar from "../Avatar";
 import MenuItem from "./MenuItem";
 import { useRouter } from "next/navigation";
 
+import useRegisterModal from "@/app/hooks/useRegisterModal";
+
 interface UserMenuProps {
   currentUser?: null;
 }
 
 const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const registerModal = useRegisterModal();
   const router = useRouter();
   return (
     <div className="relative">
@@ -98,7 +101,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
             ) : (
               <>
                 <MenuItem label="Login" onClick={() => {}} />
-                <MenuItem label="Sign up" onClick={() => {}} />
+                <MenuItem label="Sign up" onClick={()=>registerModal.onOpen()} />
               </>
             )}
           </div>
