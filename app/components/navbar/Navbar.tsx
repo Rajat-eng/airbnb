@@ -4,11 +4,7 @@ import Logo from './Logo';
 import Search from './Search';
 import UserMenu from './UserMenu';
 
-interface NavbarProps{
-  currentUser?:null
-}
-
-const Navbar:React.FC<NavbarProps> = ({currentUser}) => {
+const Navbar = () => {
   return (
     <div className='fixed w-full bg-slate-100 shadow-md'>
         <div className='py-4 border-b-[1px] border-black'>
@@ -23,7 +19,7 @@ const Navbar:React.FC<NavbarProps> = ({currentUser}) => {
                 >
                 <Logo />
                 <Search />
-                <UserMenu currentUser={currentUser}/>
+                <UserMenu />
                 </div>
             </Container>
         </div>

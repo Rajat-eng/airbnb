@@ -4,11 +4,11 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
+
 
 import prisma from "@/app/libs/prismadb";
 
-export const authOptions: AuthOptions = {
+export const authOptions:AuthOptions=({
   adapter: PrismaAdapter(prisma),
   providers: [
     GithubProvider({
@@ -26,6 +26,7 @@ export const authOptions: AuthOptions = {
         password: { label: "password", type: "password" },
       },
       async authorize(credentials) {
+      
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Invalid credentials");
         }
@@ -35,9 +36,9 @@ export const authOptions: AuthOptions = {
             email: credentials.email,
           },
         });
-
-        if (!user || user?.hashedPassword) {
-          throw new Error("Invalid credentials");
+        
+        if (!user || !user?.hashedPassword) {
+          throw new Error("User not found.");
         }
         const isCorrectPassword = await bcrypt.compare(
           credentials.password,
@@ -53,9 +54,12 @@ export const authOptions: AuthOptions = {
     }),
   ],
   callbacks:{
-    async jwt({token}){
-      console.log("token",token)
+    async jwt({token,user}){
       return token;
+    },
+    async session({session,token,user}){
+    //   console.log("callback session",session)
+      return session;
     }
   },
   pages: {
@@ -66,4 +70,9 @@ export const authOptions: AuthOptions = {
     strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
-};
+}) 
+
+
+const handlers=NextAuth(authOptions);
+
+export{handlers as GET,handlers as POST}

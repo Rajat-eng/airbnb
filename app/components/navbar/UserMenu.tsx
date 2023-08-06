@@ -1,20 +1,28 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlineMenu } from "react-icons/ai";
 import Avatar from "../Avatar";
 import MenuItem from "./MenuItem";
 import { useRouter } from "next/navigation";
 
 import useRegisterModal from "@/app/hooks/useRegisterModal";
+import { signOut, useSession } from "next-auth/react";
+import useLoginModal from "@/app/hooks/useLoginModal";
 
-interface UserMenuProps {
-  currentUser?: null;
-}
 
-const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
+const UserMenu= () => {
   const [isOpen, setIsOpen] = useState(false);
   const registerModal = useRegisterModal();
+  const loginModal=useLoginModal();
   const router = useRouter();
+  const {data:session}=useSession();
+
+  useEffect(()=>{
+    return ()=>{
+      setIsOpen(false)
+    }
+  },[])
+
   return (
     <div className="relative">
       <div className="flex flex-row items-center gap-3">
@@ -30,7 +38,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
             transition 
             cursor-pointer"
         >
-          Airbnb your home
+          {session? `Hello ${session?.user?.name}` :` Airbnb your home`}
         </div>
         <div
           onClick={()=>setIsOpen(!isOpen)}
@@ -51,7 +59,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
         >
           <AiOutlineMenu />
           <div className="hidden md:block">
-            <Avatar src={null} />
+            <Avatar src={session?.user?.image} />
           </div>
         </div>
       </div>
@@ -76,7 +84,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
                 cursor-pointer
                 "
           >
-            {currentUser ? (
+            {session ? (
               <>
                 <MenuItem
                   label="My trips"
@@ -96,11 +104,11 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
                 />
                 <MenuItem label="Airbnb your home" onClick={() => {}} />
                 <hr />
-                <MenuItem label="Logout" onClick={() => {}} />
+                <MenuItem label="Logout" onClick={() => {signOut()}} />
               </>
             ) : (
               <>
-                <MenuItem label="Login" onClick={() => {}} />
+                <MenuItem label="Login" onClick={() => {loginModal.onOpen()}} />
                 <MenuItem label="Sign up" onClick={()=>registerModal.onOpen()} />
               </>
             )}
