@@ -18,7 +18,7 @@ const Input = (props:InputProps) => {
   const {name,label,type="text",disabled,formatPrice,errors,errorText,register}=props
   return (
     <div className="w-full relative">
-      {/* {formatPrice && (
+      {formatPrice && (
         <BiDollar
           size={24}  
           className="
@@ -28,7 +28,7 @@ const Input = (props:InputProps) => {
             left-2
           "
         />
-      )} */}
+      )}
       <input
         {...register(name as keyof FieldValues)}
         disabled={disabled}

@@ -84,7 +84,7 @@ const Modal: React.FC<ModalProps> = ({
           className="
           outline outline-offset-2 outline-2 outline-[#08e9d2]
           relative 
-          w-full
+          w-8/10
           md:w-4/6
           lg:w-3/6
           xl:w-2/5
