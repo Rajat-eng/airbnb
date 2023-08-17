@@ -17,16 +17,22 @@ import Counter from "../inputs/Counter";
 import Input from "../inputs/Input";
 import CountrySelect from "../inputs/CountrySelect";
 import { CountrySelectValue } from "../inputs/CountrySelect";
-
+import ImageUpload from "../inputs/ImageUpload";
 
 
 const rentFormValidation = z.object({
   category: z.string(),
-  location: z.object({}).nullable(),
+  location: z.object({
+        value: z.string(),
+        label: z.string(),
+        flag:  z.string(),
+        latlng: z.number().array(),
+        region: z.string(),
+  }).nullable(),
   title: z.string(),
   description: z.string(),
   imageSrc: z.string(),
-  guestCount: z.number(),
+  guestCount: z.number().min(1),
   roomCount: z.number().min(1),
   bathroomCount: z.number().min(1),
   price: z.coerce.number().min(0),
@@ -75,7 +81,6 @@ const RentModal = () => {
   const roomCount = watch("roomCount");
   const bathroomCount = watch("bathroomCount");
   const imageSrc = watch("imageSrc");
-  const price=watch("price")
   // console.log("watch",watch());
   // console.log("errors",errors);
  
@@ -125,23 +130,22 @@ const RentModal = () => {
     if (step !== STEPS.PRICE) {
       return onNext();
     }
-    console.log(data)
-    // setIsLoading(true);
+    setIsLoading(true);
 
-    // axios.post('/api/listings', data)
-    // .then(() => {
-    //   toast.success('Listing created!');
-    //   router.refresh();
-    //   reset();
-    //   setStep(STEPS.CATEGORY)
-    //   rentModal.onClose();
-    // })
-    // .catch(() => {
-    //   toast.error('Something went wrong.');
-    // })
-    // .finally(() => {
-    //   setIsLoading(false);
-    // })
+    axios.post('/api/listings', data)
+    .then(() => {
+      toast.success('Listing created!');
+      router.refresh();
+      reset();
+      setStep(STEPS.CATEGORY)
+      rentModal.onClose();
+    })
+    .catch(() => {
+      toast.error('Something went wrong.');
+    })
+    .finally(() => {
+      setIsLoading(false);
+    })
   };
   let bodyContent: React.ReactElement = <></>;
 
@@ -186,7 +190,7 @@ const RentModal = () => {
         />
 
         <CountrySelect
-          value={location as CountrySelectValue} 
+          value={location} 
           onChange={(value:CountrySelectValue)=>setCustomValue('location',value)} 
         />
 
@@ -230,16 +234,12 @@ const RentModal = () => {
           title="Add a photo of your place"
           subtitle="Show guests what your place looks like!"
         />
-        <div
-          className="
-             grid 
-             grid-cols-1 
-             md:grid-cols-2 
-             gap-3
-             max-h-[50vh]
-             overflow-y-auto
-             "
-        ></div>
+
+        <ImageUpload 
+          value={imageSrc} 
+          onChange={(value)=>setCustomValue('imageSrc',value)}
+        />
+
       </div>
     );
   } else if (step === STEPS.DESCRIPTION) {

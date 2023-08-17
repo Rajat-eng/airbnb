@@ -59,6 +59,9 @@ export const authOptions:AuthOptions=({
     },
     async session({session,token,user}){
     //   console.log("callback session",session)
+    if(token && token.sub && session.user){
+      session.user={...session.user,id:token.sub}
+    }
       return session;
     }
   },
